@@ -19,3 +19,10 @@ void do_pattern(void (*Func)(int, CRGB*, double, int), double iTime, int pattern
     (*Func)(i, &leds[i], iTime, pattern_setting);
   }
 }
+
+void decay(CRGB *led, double amount) {
+  led->r = floor(led->r * amount);
+  led->g = floor(led->g * amount);
+  led->b = floor(led->b * amount);
+}
+

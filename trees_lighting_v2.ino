@@ -16,7 +16,7 @@
 
 #include "FastLED.h"
 
-#define DEBUG true
+//#define DEBUG true
 
 #define NUM_LEDS 150
 
@@ -39,7 +39,13 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
   FastLED.addLeds<WS2812B, PIN_LEDSTRIP, GRB>(leds, NUM_LEDS);
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
+  pinMode(6, INPUT);
+  if(digitalRead(6) == HIGH){
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 4000);
+  }else{
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
+  }
+  pinMode(6, OUTPUT);
   FastLED.delay(1000/FRAMES_PER_SECOND);
   FastLED.clear(true);
   #ifdef DEBUG
@@ -60,7 +66,7 @@ void loop() {
       do_pattern(solidwhite, iTime, pattern_setting);
       break;
     case 2:
-      do_pattern(rainbow, iTime, pattern_setting);
+      do_pattern(solidcolour, iTime, pattern_setting);
       break;
     case 3:
       do_pattern(solidrainbowslow, iTime, pattern_setting);
@@ -69,16 +75,16 @@ void loop() {
       do_pattern(solidrainbowfast, iTime, pattern_setting);
       break;
     case 5:
-      do_pattern(solidcolour, iTime, pattern_setting);
+      do_pattern(rainbow, iTime, pattern_setting);
       break;
     case 6:
-      //do_pattern(&rainbow, iTime);
+      do_pattern(sparkle_white, iTime, pattern_setting);
       break;
     case 7:
-      //do_pattern(&rainbow, iTime);
+      do_pattern(sparkle_varicol, iTime, pattern_setting);
       break;
     case 8:
-      //do_pattern(&rainbow, iTime);
+      do_pattern(sparkle_rainbowphase, iTime, pattern_setting);
       break;
   }
 
