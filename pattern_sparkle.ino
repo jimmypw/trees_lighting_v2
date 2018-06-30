@@ -1,5 +1,5 @@
 void sparkle_white(int index, CRGB *thisLed, double iTime, int pattern_setting) {
-  int dice = random(map(pattern_setting, 0, 1023, 30, 900));
+  int dice = random(86);
   #ifdef DEBUG
   Serial.print("pattern_setting: ");
   Serial.println(pattern_setting);

@@ -16,15 +16,17 @@
 
 #include "FastLED.h"
 
-//#define DEBUG true
+// Uncomment this to enable debug information to be sent over serial.
+// Caution: This will kill the performance of the board.
+//#define DEBUG
 
-#define NUM_LEDS 300
+#define NUM_LEDS 150
 
 // Which pin is connected to the neopixel
 #define PIN_LEDSTRIP 3
 
 // Total number of defined patterns
-#define MAX_PATTERNS 8
+#define MAX_PATTERNS 13
 
 // Which pin is assigned to pattern selector pot
 #define PIN_PATTERNSELECT A0
@@ -44,18 +46,36 @@ CRGB leds[NUM_LEDS];
 void high_power_hack(){
   /* 
    *  This function will relax the fastled power function for
-   *  brighter LED output
+   *  brighter LED output. While the buck converter is rated
+   *  for 5A im restricting it to 4A just to contain power 
+   *  usage a bit.
    *  
-   *  PIN_HIGHPOWERHACK must be connected to either 
-   *  3.3v (enable high power output) 
-   *  ground (disable high power output)
+   *  I test with the internal pullup resistor so that the
+   *  cable does not need to be connected to anything
+   *  (to prevent any happy accidents) and high power mode
+   *  will be enabled ONLY if the pin is connected to ground.
+   *  
+   *  I then set the pin mode to output and the state to low
+   *  effectively connecting ground to ground if the cable is 
+   *  connected and ground to nothing if the cable is not
+   *  connected effectively removing all potential current draw.
+   *  
+   *  I should probably test this with a multimeter though.
+   *  
+   *  PIN_HIGHPOWERHACK must be connected to 
+   *  ground (enable high power output)
    */
-  pinMode(PIN_HIGHPOWERHACK, INPUT);
-  if(digitalRead(PIN_HIGHPOWERHACK) == HIGH){
+  pinMode(PIN_HIGHPOWERHACK, INPUT_PULLUP);
+  if(digitalRead(PIN_HIGHPOWERHACK) == LOW){
+    // Pin is connected to ground
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 4000);
   }else{
+    // Pin is not connected,
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
   }
+  // 
+  pinMode(PIN_HIGHPOWERHACK, OUTPUT);
+  digitalWrite(PIN_HIGHPOWERHACK, LOW);
 }
 
 void setup() {
@@ -66,6 +86,10 @@ void setup() {
   #ifdef DEBUG
   Serial.begin(115200);
   #endif
+  // startup sequence here...
+  do_pattern(rainbow_startup, 10.00, 1023);
+  FastLED.show();
+  delay(2000);
 }
 
 void loop() {
@@ -76,6 +100,11 @@ void loop() {
   #endif
   int pattern_setting = analogRead(PIN_PATTERNSETTING);
   int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
+
+  #ifdef DEBUG
+  Serial.print("pattern: ");
+  Serial.println(pattern);
+  #endif
   
   switch (pattern) {
     case 1:
@@ -94,13 +123,28 @@ void loop() {
       do_pattern(rainbow, iTime, pattern_setting);
       break;
     case 6:
-      do_pattern(sparkle_white, iTime, pattern_setting);
+      do_pattern(rainbow_variablecompress, iTime, pattern_setting);
       break;
     case 7:
-      do_pattern(sparkle_varicol, iTime, pattern_setting);
+      do_pattern(sparkle_white, iTime, pattern_setting);
       break;
     case 8:
+      do_pattern(sparkle_varicol, iTime, pattern_setting);
+      break;
+    case 9:
       do_pattern(sparkle_rainbowphase, iTime, pattern_setting);
+      break;
+    case 10:
+      do_pattern(solid_timestep, iTime, pattern_setting);
+      break;
+    case 11:
+      do_pattern(saw_white, iTime, pattern_setting);
+      break;
+    case 12:
+      do_pattern(saw_colourstep, iTime, pattern_setting);
+      break;
+    case 13:
+      do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
       break;
   }
 
