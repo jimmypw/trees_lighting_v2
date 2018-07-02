@@ -78,6 +78,11 @@ void high_power_hack(){
   digitalWrite(PIN_HIGHPOWERHACK, LOW);
 }
 
+void startup() {
+  do_pattern(rainbow_startup, 10.00, 1023);
+  FastLED.show();
+}
+
 void setup() {
   FastLED.addLeds<WS2812B, PIN_LEDSTRIP, GRB>(leds, NUM_LEDS);
   high_power_hack();
@@ -86,9 +91,7 @@ void setup() {
   #ifdef DEBUG
   Serial.begin(115200);
   #endif
-  // startup sequence here...
-  do_pattern(rainbow_startup, 10.00, 1023);
-  FastLED.show();
+  startup();
   delay(2000);
 }
 
@@ -147,7 +150,7 @@ void loop() {
       do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
       break;
     case 14:
-      do_transition(sparkle_rainbowphase, 84, rainbow_variablecompress, 512, ((1.0 / 1023) * pattern_setting), iTime);
+      mix_pattern(sparkle_rainbowphase, 84, rainbow_variablecompress, 512,  0.0478, iTime);
       break;
     case 15:
       pattern_showcase(iTime);

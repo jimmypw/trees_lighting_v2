@@ -31,38 +31,23 @@ uint8_t colour_secondstep(double iTime) {
   return random(0, 255);
 }
 
-
-// WORK IN PROGRESS BELOW
-
-void do_transition(void (*Func1)(int, CRGB*, double, int), int pattern_setting1, void (*Func2)(int, CRGB*, double, int), int pattern_setting2, float balance, double iTime) {
+void mix_pattern(void (*Func1)(int, CRGB*, double, int), int pattern_setting1, void (*Func2)(int, CRGB*, double, int), int pattern_setting2, float balance, double iTime) {
+  #ifdef DEBUG
+  //Serial.print("balance: ");
+  //Serial.println(balance);
+  #endif
+  
   for (int i = 0; i < NUM_LEDS; i++) {
     // create two new placeholders holding the dereferenced value of the current led 
-    CRGB led_pattern1;
-    CRGB led_pattern2;
-    CRGB output;
-
-    #ifdef DEBUG
-    //Serial.print("balance: ");
-    //Serial.println(balance);
-    #endif
-
-    // copy the contents of the struct - there may be a simpler way to do this
-    //memcpy(&led_pattern1, &leds[i], sizeof(CRGB));
-    //memcpy(&led_pattern2, &leds[i], sizeof(CRGB));
-    // perhaps like this:
-    led_pattern1 = leds[i];
-    led_pattern2 = leds[i];
+    CRGB led_pattern1 = leds[i];
+    CRGB led_pattern2 = leds[i];
     
-
     // Generate both effects
     (*Func1)(i, &led_pattern1, iTime, pattern_setting1);
     (*Func2)(i, &led_pattern2, iTime, pattern_setting2);
 
-    // interpolate between the effects
-    output = interpolate(led_pattern1, led_pattern2, balance);
-
-    // write the effect back to the array
-    leds[i] = output;
+    // interpolate between the effects and write new value back to array
+    leds[i] = interpolate(led_pattern1, led_pattern2, balance);
   }
 }
 
@@ -77,4 +62,11 @@ CRGB interpolate(CRGB x1, CRGB x2, float t){
   output.b = interpolate(x1.b, x2.b, t);
   return output;
 }
+
+double interpolate_over_time(int startms, int endms, int currentms){
+  int delta = endms - startms;
+  int currentms_normal = startms - currentms;
+  return (double)currentms_normal / (double)delta;
+}
+
 
