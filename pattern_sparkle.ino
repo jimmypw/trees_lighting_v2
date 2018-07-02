@@ -1,5 +1,6 @@
 void sparkle_white(int index, CRGB *thisLed, double iTime, int pattern_setting) {
-  int dice = random(86);
+  // 86 is a nice setting.
+  int dice = random(map(pattern_setting, 0, 1023, 0, 200));
   #ifdef DEBUG
   Serial.print("pattern_setting: ");
   Serial.println(pattern_setting);
@@ -25,11 +26,11 @@ void sparkle_varicol(int index, CRGB *thisLed, double iTime, int pattern_setting
 }
 
 void sparkle_rainbowphase(int index, CRGB *thisLed, double iTime, int pattern_setting) {
-  int dice = random(86);
+  int dice = random(map(pattern_setting, 0, 1023, 0, 200));
   uint8_t colour = iTime*64;
   #ifdef DEBUG
-  Serial.print("pattern_setting: ");
-  Serial.println(pattern_setting);
+  //Serial.print("pattern_setting: ");
+  //Serial.println(pattern_setting);
   #endif
   if (dice == 0) {
     *thisLed = CHSV(colour, 255,255);

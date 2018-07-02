@@ -34,25 +34,29 @@ uint8_t colour_secondstep(double iTime) {
 
 // WORK IN PROGRESS BELOW
 
-void do_transition(void (*Func1)(int, CRGB*, double, int), void (*Func2)(int, CRGB*, double, int), uint8_t balance, double iTime, int pattern_setting) {
+void do_transition(void (*Func1)(int, CRGB*, double, int), int pattern_setting1, void (*Func2)(int, CRGB*, double, int), int pattern_setting2, float balance, double iTime) {
   for (int i = 0; i < NUM_LEDS; i++) {
     // create two new placeholders holding the dereferenced value of the current led 
     CRGB led_pattern1;
     CRGB led_pattern2;
     CRGB output;
 
+    #ifdef DEBUG
+    //Serial.print("balance: ");
+    //Serial.println(balance);
+    #endif
+
     // copy the contents of the struct - there may be a simpler way to do this
-    memcpy(&led_pattern1, &leds[i], sizeof(CRGB));
-    memcpy(&led_pattern2, &leds[i], sizeof(CRGB));
+    //memcpy(&led_pattern1, &leds[i], sizeof(CRGB));
+    //memcpy(&led_pattern2, &leds[i], sizeof(CRGB));
     // perhaps like this:
-    /*
-     * led_pattern1 = leds[i];
-     * led_pattern2 = leds[i];
-     */
+    led_pattern1 = leds[i];
+    led_pattern2 = leds[i];
+    
 
     // Generate both effects
-    (*Func1)(i, &led_pattern1, iTime, pattern_setting);
-    (*Func2)(i, &led_pattern2, iTime, pattern_setting);
+    (*Func1)(i, &led_pattern1, iTime, pattern_setting1);
+    (*Func2)(i, &led_pattern2, iTime, pattern_setting2);
 
     // interpolate between the effects
     output = interpolate(led_pattern1, led_pattern2, balance);
@@ -62,28 +66,15 @@ void do_transition(void (*Func1)(int, CRGB*, double, int), void (*Func2)(int, CR
   }
 }
 
-CRGB interpolate(CRGB pattern1, CRGB pattern2, uint8_t balance){
-  CRGB output;
-  /* First pass, i forgot to include balance.
-  output.r = pattern1.r + (pattern2.r - pattern1.r);
-  output.g = pattern1.g + (pattern2.g - pattern1.g);
-  output.b = pattern1.b + (pattern2.b - pattern1.b);
-  */ 
-
-
-  /*
-   * balance = 0.5
-   * pat 1 r = 64
-   * pat 2 r = 182
-   * find the higher value
-   * difference = pat (high) r - pat (low) r = pat 2 r - pat 1 r = 118
-   * balance modifier = (difference) * (balance) = 118 * 0.5 = 59
-   * output r = pat (low) + (balance modifier)
-   * 
-   * repeat for g and b channels
-   * return output
-   */
-  return output;
+int interpolate(int x1, int x2, float t){
+  return x1 + ((x2 - x1) * t);
 }
 
+CRGB interpolate(CRGB x1, CRGB x2, float t){
+  CRGB output;
+  output.r = interpolate(x1.r, x2.r, t);
+  output.g = interpolate(x1.g, x2.g, t);
+  output.b = interpolate(x1.b, x2.b, t);
+  return output;
+}
 

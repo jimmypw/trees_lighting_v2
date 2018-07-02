@@ -26,7 +26,7 @@
 #define PIN_LEDSTRIP 3
 
 // Total number of defined patterns
-#define MAX_PATTERNS 13
+#define MAX_PATTERNS 15
 
 // Which pin is assigned to pattern selector pot
 #define PIN_PATTERNSELECT A0
@@ -95,15 +95,15 @@ void setup() {
 void loop() {
   double iTime = seconds_with_ms();
   #ifdef DEBUG
-  Serial.print("iTime: ");
-  Serial.println(iTime);
+  //Serial.print("iTime: ");
+  //Serial.println(iTime);
   #endif
   int pattern_setting = analogRead(PIN_PATTERNSETTING);
   int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
 
   #ifdef DEBUG
-  Serial.print("pattern: ");
-  Serial.println(pattern);
+  Serial.print("pattern_setting: ");
+  Serial.println(pattern_setting);
   #endif
   
   switch (pattern) {
@@ -145,6 +145,12 @@ void loop() {
       break;
     case 13:
       do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
+      break;
+    case 14:
+      do_transition(sparkle_rainbowphase, 84, rainbow_variablecompress, 512, ((1.0 / 1023) * pattern_setting), iTime);
+      break;
+    case 15:
+      pattern_showcase(iTime);
       break;
   }
 
