@@ -17,7 +17,7 @@
 #include "FastLED.h"
 
 // Uncomment this to enable debug information to be sent over serial.
-// Caution: This will kill the performance of the board.
+// Caution: This will kill the performance.
 //#define DEBUG
 
 #define NUM_LEDS 150
@@ -105,8 +105,8 @@ void loop() {
   int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
 
   #ifdef DEBUG
-  Serial.print("pattern_setting: ");
-  Serial.println(pattern_setting);
+  //Serial.print("pattern_setting: ");
+  //Serial.println(pattern_setting);
   #endif
   
   switch (pattern) {

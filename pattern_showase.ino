@@ -28,11 +28,24 @@
    *  interpolate_over_time function to allow for smooth transitions
    *  between effects.
    */
-  int currentms  = millis();
-  int secondofcycle = (currentms / 1000) % SHOWCASE_LENGTH;
-  int msofcycle = currentms % (SHOWCASE_LENGTH * 1000);
-  
 
+  // first, store the value of millis() so that it doesn't change while calculating the showreel.
+  unsigned long currentms = millis();
+
+  // Then, generate the other values we require
+  unsigned long secondofcycle = (currentms / 1000L) % SHOWCASE_LENGTH;
+  unsigned long msofcycle = currentms % (SHOWCASE_LENGTH * 1000L);
+
+  #ifdef DEBUG
+  //Serial.print("Currentms: ");
+  //Serial.println(currentms);
+  //Serial.print("secondofcycle: ");
+  //Serial.println(secondofcycle);
+  //Serial.print("msofcycle: ");
+  //Serial.println(msofcycle);
+  #endif
+  
+  // The length of this switch must equal SHOWCASE_LENGTH
   switch(secondofcycle) {
     case 0:
     case 1:
@@ -85,7 +98,7 @@
     case 37:
     case 38:
     case 39:
-      do_pattern(rainbow_variablecompress, iTime, 256);
+      do_pattern(solid_rainbow_fast, iTime, 512);
       break;
     case 40:
     case 41:
@@ -97,7 +110,7 @@
     case 47:
     case 48:
     case 49:
-      do_pattern(rainbow_variablecompress, iTime, 256);
+      do_pattern(solid_timestep, iTime, 1024);
       break;
     case 50:
     case 51:
@@ -109,7 +122,7 @@
     case 57:
     case 58:
     case 59:
-      do_pattern(rainbow_variablecompress, iTime, 256);
+      do_pattern(saw_coloursaturationstep, iTime, 0);
       break;
   }
  }
