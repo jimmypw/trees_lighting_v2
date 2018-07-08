@@ -29,7 +29,7 @@ void sparkle_rainbowphase(const int index, CRGB *thisLed, const double iTime, co
   const int dice = random(map(pattern_setting, 0, 1023, 0, 200));
   const uint8_t colour = iTime*64;
   #ifdef DEBUG
-  Serial.println("in sparkle_rainbowphase: ");
+  //Serial.println("in sparkle_rainbowphase: ");
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
   #endif
