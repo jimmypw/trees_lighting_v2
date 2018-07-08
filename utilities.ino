@@ -1,4 +1,4 @@
-int normalise_pattern_selector(int input) {
+int normalise_pattern_selector(const int input) {
   return constrain(map(input, 0, 1023, 1, (MAX_PATTERNS + 1)), 0, MAX_PATTERNS);
 }
 
@@ -6,32 +6,32 @@ double seconds_with_ms() {
   return (double)millis()/1000;
 }
 
-double normalise_index(int index){
+double normalise_index(const int index){
   return index / NUM_LEDS;
 }
 
-void decay(CRGB *led, double amount) {
+void decay(CRGB *led, const double amount) {
   led->r = floor(led->r * amount);
   led->g = floor(led->g * amount);
   led->b = floor(led->b * amount);
 }
 
-void do_pattern(void (*Func)(int, CRGB*, double, int), double iTime, int pattern_setting) {
+void do_pattern(const void (*Func)(const int, CRGB*, const double, const int), const double iTime, const int pattern_setting) {
   for (int i = 0; i < NUM_LEDS; i++) {
     (*Func)(i, &leds[i], iTime, pattern_setting);
   }
 }
 
-uint8_t saw_time(double iTime) {
+uint8_t saw_time(const double iTime) {
   return (iTime - (uint8_t)iTime) * 255;
 }
 
-uint8_t colour_secondstep(double iTime) {
+uint8_t colour_secondstep(const double iTime) {
   randomSeed(floor(iTime)+1);
   return random(0, 255);
 }
 
-void mix_pattern(void (*Func1)(int, CRGB*, double, int), int pattern_setting1, void (*Func2)(int, CRGB*, double, int), int pattern_setting2, float balance, double iTime) {
+void mix_pattern(const void (*Func1)(const int, CRGB*, const double, const int), const int pattern_setting1, const void (*Func2)(const int, CRGB*, const double, const int), const int pattern_setting2, const float balance, const double iTime) {
   #ifdef DEBUG
   //Serial.print("balance: ");
   //Serial.println(balance);
@@ -51,11 +51,11 @@ void mix_pattern(void (*Func1)(int, CRGB*, double, int), int pattern_setting1, v
   }
 }
 
-int interpolate(int x1, int x2, float t){
+int interpolate(const int x1, const int x2, const float t){
   return x1 + ((x2 - x1) * t);
 }
 
-CRGB interpolate(CRGB x1, CRGB x2, float t){
+CRGB interpolate(const CRGB x1, const CRGB x2, float t){
   CRGB output;
   output.r = interpolate(x1.r, x2.r, t);
   output.g = interpolate(x1.g, x2.g, t);
@@ -63,10 +63,5 @@ CRGB interpolate(CRGB x1, CRGB x2, float t){
   return output;
 }
 
-double interpolate_over_time(int startms, int endms, int currentms){
-  int delta = endms - startms;
-  int currentms_normal = startms - currentms;
-  return (double)currentms_normal / (double)delta;
-}
 
 

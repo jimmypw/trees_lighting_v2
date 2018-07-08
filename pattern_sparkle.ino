@@ -1,6 +1,6 @@
-void sparkle_white(int index, CRGB *thisLed, double iTime, int pattern_setting) {
+void sparkle_white(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
   // 86 is a nice setting.
-  int dice = random(map(pattern_setting, 0, 1023, 0, 200));
+  const int dice = random(map(pattern_setting, 0, 1023, 0, 200));
   #ifdef DEBUG
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
@@ -12,9 +12,9 @@ void sparkle_white(int index, CRGB *thisLed, double iTime, int pattern_setting) 
   decay(thisLed, 0.80);
 }
 
-void sparkle_varicol(int index, CRGB *thisLed, double iTime, int pattern_setting) {
-  int dice = random(86);
-  uint8_t colour = map(pattern_setting, 0, 1023, 0, 255);
+void sparkle_varicol(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  const int dice = random(86);
+  const uint8_t colour = map(pattern_setting, 0, 1023, 0, 255);
   #ifdef DEBUG
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
@@ -25,10 +25,11 @@ void sparkle_varicol(int index, CRGB *thisLed, double iTime, int pattern_setting
   decay(thisLed, 0.80);
 }
 
-void sparkle_rainbowphase(int index, CRGB *thisLed, double iTime, int pattern_setting) {
-  int dice = random(map(pattern_setting, 0, 1023, 0, 200));
-  uint8_t colour = iTime*64;
+void sparkle_rainbowphase(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  const int dice = random(map(pattern_setting, 0, 1023, 0, 200));
+  const uint8_t colour = iTime*64;
   #ifdef DEBUG
+  Serial.println("in sparkle_rainbowphase: ");
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
   #endif

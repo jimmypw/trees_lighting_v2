@@ -73,7 +73,6 @@ void high_power_hack(){
     // Pin is not connected,
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
   }
-  // 
   pinMode(PIN_HIGHPOWERHACK, OUTPUT);
   digitalWrite(PIN_HIGHPOWERHACK, LOW);
 }
@@ -91,20 +90,20 @@ void setup() {
   #ifdef DEBUG
   Serial.begin(115200);
   #endif
-  startup();
+  //startup();
   delay(2000);
 }
 
 void loop() {
-  double iTime = seconds_with_ms();
+  const double iTime = seconds_with_ms();
+  const int pattern_setting = analogRead(PIN_PATTERNSETTING);
+  const int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
+
   #ifdef DEBUG
   //Serial.print("iTime: ");
   //Serial.println(iTime);
-  #endif
-  int pattern_setting = analogRead(PIN_PATTERNSETTING);
-  int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
-
-  #ifdef DEBUG
+  Serial.print("pattern: ");
+  Serial.println(pattern);
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
   #endif
@@ -141,16 +140,16 @@ void loop() {
       do_pattern(solid_timestep, iTime, pattern_setting);
       break;
     case 11:
-      do_pattern(saw_white, iTime, pattern_setting);
-      break;
-    case 12:
-      do_pattern(saw_colourstep, iTime, pattern_setting);
-      break;
-    case 13:
       do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
       break;
-    case 14:
+    case 12:
       mix_pattern(sparkle_rainbowphase, 84, rainbow_variablecompress, 512,  0.0478, iTime);
+      break;
+    case 13:
+      mix_pattern(rainbow_variablecompress, 1024, rainbow_variablecompress, 512,  0.50, iTime);
+      break;
+    case 14:
+      mix_pattern(sparkle_rainbowphase, 84, sparkle_white, 1024,  0.50, iTime);
       break;
     case 15:
       pattern_showcase(iTime);
