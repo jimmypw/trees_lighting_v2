@@ -90,7 +90,7 @@ void setup() {
   #ifdef DEBUG
   Serial.begin(115200);
   #endif
-  //startup();
+  startup();
   delay(2000);
 }
 
