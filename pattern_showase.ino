@@ -37,12 +37,12 @@
   const unsigned long msofcycle = currentms % (SHOWCASE_LENGTH * 1000L);
 
   #ifdef DEBUG
-  Serial.print("Currentms: ");
-  Serial.println(currentms);
-  Serial.print("secondofcycle: ");
-  Serial.println(secondofcycle);
-  Serial.print("msofcycle: ");
-  Serial.println(msofcycle);
+  //Serial.print("Currentms: ");
+  //Serial.println(currentms);
+  //Serial.print("secondofcycle: ");
+  //Serial.println(secondofcycle);
+  //Serial.print("msofcycle: ");
+  //Serial.println(msofcycle);
   #endif
   
   // The length of this switch must equal SHOWCASE_LENGTH

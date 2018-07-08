@@ -102,8 +102,8 @@ void loop() {
   #ifdef DEBUG
   //Serial.print("iTime: ");
   //Serial.println(iTime);
-  Serial.print("pattern: ");
-  Serial.println(pattern);
+  //Serial.print("pattern: ");
+  //Serial.println(pattern);
   //Serial.print("pattern_setting: ");
   //Serial.println(pattern_setting);
   #endif
