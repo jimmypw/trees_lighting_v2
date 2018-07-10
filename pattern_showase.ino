@@ -9,7 +9,7 @@
  * 
  */
  // in seconds
- #define SHOWCASE_LENGTH 4
+ #define SHOWCASE_LENGTH 5
 
  void pattern_showcase(const double iTime) {
   /* 
@@ -48,19 +48,24 @@
   // The length of this switch must equal SHOWCASE_LENGTH
   switch(secondofcycle) {
     case 0:
-      do_pattern(sparkle_white, iTime, 86);
+      do_pattern(sparkle_white, iTime, 150);
       break;
     case 1:
-      do_pattern(sparkle_rainbowphase, iTime, 86);
-      break;
+      mix_pattern(sparkle_rainbowphase, 150,
+                  sparkle_white, 150,
+                  0.50, 
+                  iTime);
     case 2:
-      mix_pattern(sparkle_rainbowphase, 86,
+      do_pattern(sparkle_rainbowphase, iTime, 150);
+      break;
+    case 3:
+      mix_pattern(sparkle_rainbowphase, 150,
                     rainbow_variablecompress, 512,
                     0.05,
                     iTime);
       break;
-    case 3:
-      mix_pattern(sparkle_white, 86,
+    case 4:
+      mix_pattern(sparkle_white, 150,
                     rainbow_variablecompress, 512,
                     0.05,
                     iTime);

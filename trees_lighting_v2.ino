@@ -26,7 +26,7 @@
 #define PIN_LEDSTRIP 3
 
 // Total number of defined patterns
-#define MAX_PATTERNS 15
+#define MAX_PATTERNS 20
 
 // Which pin is assigned to pattern selector pot
 #define PIN_PATTERNSELECT A0
@@ -131,27 +131,42 @@ void loop() {
       do_pattern(sparkle_white, iTime, pattern_setting);
       break;
     case 8:
-      do_pattern(sparkle_varicol, iTime, pattern_setting);
+      do_pattern(sparkle_varicol_slow, iTime, pattern_setting);
       break;
     case 9:
-      do_pattern(sparkle_rainbowphase, iTime, pattern_setting);
+      do_pattern(sparkle_varicol_fast, iTime, pattern_setting);
       break;
     case 10:
-      do_pattern(solid_timestep, iTime, pattern_setting);
+      do_pattern(sparkle_rainbowphase, iTime, pattern_setting);
       break;
     case 11:
-      do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
+      do_pattern(solid_timestep, iTime, pattern_setting);
       break;
     case 12:
-      mix_pattern(sparkle_rainbowphase, 84, rainbow_variablecompress, 512,  0.0478, iTime);
+      do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
       break;
     case 13:
-      mix_pattern(rainbow_variablecompress, 1024, rainbow_variablecompress, 512,  0.50, iTime);
+      mix_pattern(sparkle_rainbowphase, pattern_setting, rainbow_variablecompress, 512,  0.0478, iTime);
       break;
     case 14:
-      mix_pattern(sparkle_rainbowphase, 84, sparkle_white, 1024,  0.50, iTime);
+      mix_pattern(sparkle_rainbowphase, pattern_setting, solid_rainbow_slow, 1024,  0.0478, iTime);
       break;
     case 15:
+      mix_pattern(sparkle_rainbowphase, pattern_setting, solid_rainbow_fast, 1024,  0.0478, iTime);
+      break;
+    case 16:
+      mix_pattern(sparkle_white, pattern_setting, solid_rainbow_slow, 1024,  0.0478, iTime);
+      break;
+    case 17:
+      mix_pattern(sparkle_white, pattern_setting, solid_rainbow_fast, 1024,  0.0478, iTime);
+      break;
+    case 18:
+      mix_pattern(rainbow_variablecompress, 1024, rainbow_variablecompress, pattern_setting,  0.50, iTime);
+      break;
+    case 19:
+      mix_pattern(sparkle_rainbowphase, 84, sparkle_white, pattern_setting,  0.50, iTime);
+      break;
+    case 20:
       pattern_showcase(iTime);
       break;
   }
