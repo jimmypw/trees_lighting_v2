@@ -16,7 +16,7 @@ void decay(CRGB *led, const double amount) {
   led->b = floor(led->b * amount);
 }
 
-void do_pattern(const void (*Func)(const int, CRGB*, const double, const int), const double iTime, const int pattern_setting) {
+void do_pattern(void (*Func)(const int, CRGB*, const double, const int), const double iTime, const int pattern_setting) {
   for (int i = 0; i < NUM_LEDS; i++) {
     (*Func)(i, &leds[i], iTime, pattern_setting);
   }
@@ -62,6 +62,3 @@ CRGB interpolate(const CRGB x1, const CRGB x2, float t){
   output.b = interpolate(x1.b, x2.b, t);
   return output;
 }
-
-
-
