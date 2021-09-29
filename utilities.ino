@@ -1,7 +1,3 @@
-int normalise_pattern_selector(const int input) {
-  return constrain(map(input, 0, 1023, 1, (MAX_PATTERNS + 1)), 0, MAX_PATTERNS);
-}
-
 double seconds_with_ms() {
   return (double)millis()/1000;
 }
@@ -16,9 +12,9 @@ void decay(CRGB *led, const double amount) {
   led->b = floor(led->b * amount);
 }
 
-void do_pattern(void (*Func)(const int, CRGB*, const double, const int), const double iTime, const int pattern_setting) {
+void do_pattern(int pattern, const double iTime, const int pattern_setting) {
   for (int i = 0; i < NUM_LEDS; i++) {
-    (*Func)(i, &leds[i], iTime, pattern_setting);
+    (*settings.patterns[pattern])(i, &leds[i], iTime, pattern_setting);
   }
 }
 
@@ -61,4 +57,8 @@ CRGB interpolate(const CRGB x1, const CRGB x2, float t){
   output.g = interpolate(x1.g, x2.g, t);
   output.b = interpolate(x1.b, x2.b, t);
   return output;
+}
+
+float map_double(double x, double in_min, double in_max, double out_min, double out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

@@ -26,7 +26,7 @@
 #define PIN_LEDSTRIP 3
 
 // Total number of defined patterns
-#define MAX_PATTERNS 21
+#define MAX_PATTERNS 50
 
 // Which pin is assigned to pattern selector pot
 #define PIN_PATTERNSELECT A0
@@ -43,6 +43,11 @@
 // Data structure containing LED information.
 CRGB leds[NUM_LEDS];
 
+// settings struct contains current configuration
+struct {
+  int patterncount;
+  void (*patterns[MAX_PATTERNS])(const int, CRGB*, const double, const int);
+} settings;
 
 void high_power_hack(){
   /* 
@@ -78,9 +83,9 @@ void high_power_hack(){
   digitalWrite(PIN_HIGHPOWERHACK, LOW);
 }
 
-void startup() {
-  do_pattern(rainbow_startup, 10.00, 1023);
-  FastLED.show();
+void addPattern(void (*func)) {
+  settings.patterns[settings.patterncount] = func;
+  settings.patterncount++;
 }
 
 void setup() {
@@ -91,92 +96,61 @@ void setup() {
   #ifdef DEBUG
   Serial.begin(115200);
   #endif
-  startup();
-  delay(2000);
+  
+  
+
+  // init the pattern count;
+  settings.patterncount = 0;
+  // init the patterns array
+  for ( int i = 0; i < MAX_PATTERNS; i++ ) {
+    settings.patterns[i] = NULL;
+  }
+
+  addPattern(rainbow_startup);
+  addPattern(solid_white);
+  addPattern(scroll_rgb);
+  addPattern(solid_colour);
+  addPattern(sparkle_white);
+  addPattern(sparkle_varicol_fast);
+  addPattern(sparkle_varicol_slow);
+  addPattern(sparkle_rainbowphase);
+  addPattern(solid_white);
+  addPattern(scroll_rgb);
+  addPattern(solid_colour);
+  addPattern(solid_timestep);
+  addPattern(solid_rainbow_slow);
+  addPattern(solid_rainbow_fast);
+  addPattern(saw_coloursaturationstep);
+  addPattern(rainbow);
+  addPattern(rainbow_variablecompress);
+  addPattern(tricolor);
+  addPattern(cascadeout);
+  addPattern(cascadeout_rainbow );
+  addPattern(knightrider);
+  addPattern(knightrider_rainbow);
+  
+
+  // run pattern 0 for 2 seconds
+  do_pattern(0, 10.00, 1023);
+  FastLED.show();
+  delay(500);
 }
 
 void loop() {
   const double iTime = seconds_with_ms();
   const int pattern_setting = analogRead(PIN_PATTERNSETTING);
-  const int pattern = normalise_pattern_selector(analogRead(PIN_PATTERNSELECT));
+  const int pattern = map(analogRead(PIN_PATTERNSELECT), 0, 1023, 0, settings.patterncount - 1);
 
   #ifdef DEBUG
-  //Serial.print("iTime: ");
-  //Serial.println(iTime);
-  //Serial.print("pattern: ");
-  //Serial.println(pattern);
-  //Serial.print("pattern_setting: ");
-  //Serial.println(pattern_setting);
+  Serial.print("iTime: ");
+  Serial.println(iTime);
+  Serial.print("pattern: ");
+  Serial.println(pattern);
+  Serial.print("pattern_setting: ");
+  Serial.println(pattern_setting);
   #endif
   
-  switch (pattern) {
-    case 1:
-      do_pattern(solid_white, iTime, pattern_setting);
-      break;
-    case 2:
-      do_pattern(scroll_rgb, iTime, pattern_setting);;
-      break;
-    case 3:
-      do_pattern(solid_colour, iTime, pattern_setting);
-      break;
-    case 4:
-      do_pattern(solid_rainbow_slow, iTime, pattern_setting);
-      break;
-    case 5:
-      do_pattern(solid_rainbow_fast, iTime, pattern_setting);
-      break;
-    case 6:
-      do_pattern(rainbow, iTime, pattern_setting);
-      break;
-    case 7:
-      do_pattern(rainbow_variablecompress, iTime, pattern_setting);
-      break;
-    case 8:
-      do_pattern(sparkle_white, iTime, pattern_setting);
-      break;
-    case 9:
-      do_pattern(sparkle_varicol_slow, iTime, pattern_setting);
-      break;
-    case 10:
-      do_pattern(sparkle_varicol_fast, iTime, pattern_setting);
-      break;
-    case 11:
-      do_pattern(sparkle_rainbowphase, iTime, pattern_setting);
-      break;
-    case 12:
-      do_pattern(solid_timestep, iTime, pattern_setting);
-      break;
-    case 13:
-      do_pattern(saw_coloursaturationstep, iTime, pattern_setting);
-      break;
-    case 14:
-      mix_pattern(sparkle_rainbowphase, pattern_setting, rainbow_variablecompress, 512,  0.0478, iTime);
-      break;
-    case 15:
-      mix_pattern(sparkle_rainbowphase, pattern_setting, solid_rainbow_slow, 1024,  0.0478, iTime);
-      break;
-    case 16:
-      mix_pattern(sparkle_rainbowphase, pattern_setting, solid_rainbow_fast, 1024,  0.0478, iTime);
-      break;
-    case 17:
-      mix_pattern(sparkle_white, pattern_setting, solid_rainbow_slow, 1024,  0.0478, iTime);
-      break;
-    case 18:
-      mix_pattern(sparkle_white, pattern_setting, solid_rainbow_fast, 1024,  0.0478, iTime);
-      break;
-    case 19:
-      mix_pattern(rainbow_variablecompress, 1024, rainbow_variablecompress, pattern_setting,  0.50, iTime);
-      break;
-    case 20:
-      mix_pattern(sparkle_rainbowphase, 84, sparkle_white, pattern_setting,  0.50, iTime);
-      break;
-    case 21:
-      pattern_showcase(iTime);
-      break;
-    
-  }
-
-  
+  do_pattern(pattern, iTime, pattern_setting);
 
   FastLED.show();
 }
