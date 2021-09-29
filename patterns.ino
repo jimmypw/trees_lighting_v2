@@ -97,83 +97,6 @@ void solid_rainbow_fast(const int index, CRGB *thisLed, const double iTime, cons
   *thisLed = CHSV(iTime*64, 255, brightness);
 }
 
-
-/*
- * The showcase pattern
- * 
- * Here be the 'main event' of the project. Using a combination 
- * of the created patterns, mixing / interpolation and automated 
- * pattern changing. I want to create a routine that lasts about
- * 60 seconds and repeats on a loop.
- * 
- * 
- */
- // in seconds
- #define SHOWCASE_LENGTH 5
-
- void pattern_showcase(const double iTime) {
-  /* 
-   *  iTime is useful for the patterns but is not useful here.
-   *  I need to work out the posision of the showreel and I need
-   *  millisecond accuracy spanning multiple seconds to calculate
-   *  transitions. 
-   *  I'll generate these values again as accuracy is lost with iTime.
-   *  This should not be too much of an overhead
-   *  
-   *  second of cycle - contains the number of seconds we are in to the
-   *  showreel, this is useful for selecting what patterns or transitions 
-   *  are to be shown 
-   *  
-   *  msofcycle - like seconds but in ms. Used in the
-   *  interpolate_over_time function to allow for smooth transitions
-   *  between effects.
-   */
-
-  // first, store the value of millis() so that it doesn't change while calculating the showreel.
-  const unsigned long currentms = millis();
-
-  // Then, generate the other values we require
-  const unsigned long secondofcycle = (currentms / 1000L) % SHOWCASE_LENGTH;
-  const unsigned long msofcycle = currentms % (SHOWCASE_LENGTH * 1000L);
-
-  #ifdef DEBUG
-  //Serial.print("Currentms: ");
-  //Serial.println(currentms);
-  //Serial.print("secondofcycle: ");
-  //Serial.println(secondofcycle);
-  //Serial.print("msofcycle: ");
-  //Serial.println(msofcycle);
-  #endif
-  
-  // The length of this switch must equal SHOWCASE_LENGTH
-  switch(secondofcycle) {
-    case 0:
-      do_pattern(sparkle_white, iTime, 150);
-      break;
-    case 1:
-      mix_pattern(sparkle_rainbowphase, 150,
-                  sparkle_white, 150,
-                  0.50, 
-                  iTime);
-    case 2:
-      do_pattern(sparkle_rainbowphase, iTime, 150);
-      break;
-    case 3:
-      mix_pattern(sparkle_rainbowphase, 150,
-                    rainbow_variablecompress, 512,
-                    0.05,
-                    iTime);
-      break;
-    case 4:
-      mix_pattern(sparkle_white, 150,
-                    rainbow_variablecompress, 512,
-                    0.05,
-                    iTime);
-      break;
-  }
- }
-
-
 void saw_coloursaturationstep(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
   const uint8_t colour = colour_secondstep(iTime*0.10);
   const uint8_t saturation = saw_time(iTime*0.10);
@@ -193,3 +116,102 @@ void rainbow_variablecompress(const int index, CRGB *thisLed, const double iTime
 void rainbow_startup(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
   *thisLed = CHSV(index * 16, 255, 255);
 }
+
+// Contributed by Tom Stainthorpe
+void tricolor(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+
+  *thisLed = CHSV(((index % 3)*80) + (iTime*100),255, 255);
+} 
+
+void cascadeout(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  #ifdef DEBUG
+  Serial.println("in cascadeout: ");
+  Serial.print("iTime: ");
+  Serial.println((int)iTime * 10);
+  #endif
+  int millis = iTime * 100;
+  int middle = NUM_LEDS * 0.5;
+  
+  if (index < middle) {
+    *thisLed = CHSV(pattern_setting,255,(int)(index + millis*0.1)%4?0:255);
+  } else {
+    *thisLed = CHSV(pattern_setting,255,(int)(index - millis*0.1)%4?0:255);
+  }
+} 
+
+
+void cascadeout_rainbow(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  #ifdef DEBUG
+  Serial.println("in cascadeout: ");
+  Serial.print("iTime: ");
+  Serial.println((int)iTime * 10);
+  #endif
+  int millis = iTime * 100;
+  int middle = NUM_LEDS * 0.5;
+  int col = map_double(sin(iTime*2), -1.0, 1.0, 0.0, 255.0);
+  if (index < middle) {
+    *thisLed = CHSV(col,255,(int)(index + millis*0.1)%4?0:255);
+  } else {
+    *thisLed = CHSV(col,255,(int)(index - millis*0.1)%4?0:255);
+  }
+} 
+
+// Contributed by Tom Stainthorpe
+void knightrider(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  double devayval = 0.8;
+  int millis = iTime*90;
+  int stripLength =40;
+  int iter = millis / (NUM_LEDS - stripLength);
+  bool reverse = iter % 2 ? true : false;
+  if (reverse){
+    int stripStart= millis - (iter*(NUM_LEDS - stripLength));
+    int stripEnd = stripStart + stripLength;
+    if (index >= stripStart && index <= stripEnd) {
+      *thisLed = CHSV(0,255,255);
+    } else {
+      //*thisLed = CHSV(0,255,0);
+      decay(thisLed, devayval);
+    }
+  }
+  else
+  {
+    int stripStart= (NUM_LEDS - stripLength) - (millis - (iter*(NUM_LEDS - stripLength)));
+    int stripEnd = stripStart + stripLength;
+    if (index >= stripStart && index <= stripEnd) {
+      *thisLed = CHSV(0,255,255);
+    } else {
+      //*thisLed = CHSV(120,255,0);
+      decay(thisLed, devayval);
+    }
+  }
+} 
+
+void knightrider_rainbow(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
+  double devayval = 0.8;
+  int millis = iTime*90;
+  int stripLength =40;
+  int iter = millis / (NUM_LEDS - stripLength);
+  int col = map_double(sin(iTime*2), -1.0, 1.0, 0.0, 255.0);
+  bool reverse = iter % 2 ? true : false;
+  if (reverse){
+    int stripStart= millis - (iter*(NUM_LEDS - stripLength));
+    int stripEnd = stripStart + stripLength;
+    if (index >= stripStart && index <= stripEnd) {
+      *thisLed = CHSV(col,255,255);
+    } else {
+      //*thisLed = CHSV(0,255,0);
+      decay(thisLed, devayval);
+    }
+  }
+  else
+  {
+    int stripStart= (NUM_LEDS - stripLength) - (millis - (iter*(NUM_LEDS - stripLength)));
+    int stripEnd = stripStart + stripLength;
+    if (index >= stripStart && index <= stripEnd) {
+      *thisLed = CHSV(col,255,255);
+    } else {
+      //*thisLed = CHSV(120,255,0);
+      decay(thisLed, devayval);
+    }
+  }
+} 
