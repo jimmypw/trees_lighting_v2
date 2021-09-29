@@ -117,7 +117,7 @@ void rainbow_startup(const int index, CRGB *thisLed, const double iTime, const i
   *thisLed = CHSV(index * 16, 255, 255);
 }
 
-// Contributed by Tom Stainthorpe
+// Contributed by Tom Sainthorpe
 void tricolor(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
 
   *thisLed = CHSV(((index % 3)*80) + (iTime*100),255, 255);
@@ -156,7 +156,7 @@ void cascadeout_rainbow(const int index, CRGB *thisLed, const double iTime, cons
   }
 } 
 
-// Contributed by Tom Stainthorpe
+// Contributed by Tom Sainthorpe
 void knightrider(const int index, CRGB *thisLed, const double iTime, const int pattern_setting) {
   double devayval = 0.8;
   int millis = iTime*90;
